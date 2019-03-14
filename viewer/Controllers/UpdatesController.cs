@@ -28,6 +28,10 @@ namespace viewer.Controllers
             => HttpContext.Request.Headers["aeg-event-type"].FirstOrDefault() ==
                "Notification";
 
+        private bool EventTypeSubscriptionDeletion
+            => HttpContext.Request.Headers["aeg-event-type"].FirstOrDefault() ==
+               "SubscriptionDeletion";
+
         private readonly IHubContext<GridEventsHub> _hubContext;
 
         #endregion
