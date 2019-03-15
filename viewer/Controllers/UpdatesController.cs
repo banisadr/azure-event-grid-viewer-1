@@ -72,6 +72,10 @@ namespace viewer.Controllers
 
                     return await HandleGridEvents(jsonContent);
                 }
+                else if (EventTypeSubscriptionDeletion)
+                {
+                    return await HandleDelete(jsonContent);
+                }
 
                 return BadRequest();                
             }
@@ -120,6 +124,23 @@ namespace viewer.Controllers
                     e.ToString());
             }
 
+            return Ok();
+        }
+
+        private async Task<IActionResult> HandleDelete(string jsonContent)
+        {
+            var gridEvent =
+                JsonConvert.DeserializeObject<List<GridEvent<Dictionary<string, string>>>>(jsonContent)
+                    .First();
+
+            await this._hubContext.Clients.All.SendAsync(
+                "gridupdate",
+                gridEvent.Id,
+                gridEvent.EventType,
+                gridEvent.Subject,
+                gridEvent.EventTime.ToLongTimeString(),
+                jsonContent.ToString());
+                
             return Ok();
         }
 
